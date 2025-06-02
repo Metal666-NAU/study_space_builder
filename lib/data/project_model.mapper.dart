@@ -561,6 +561,9 @@ class StudyMaterialMapper extends ClassMapperBase<StudyMaterial> {
   static bool _$isPrefixSlot(StudyMaterial v) => v.isPrefixSlot;
   static const Field<StudyMaterial, bool> _f$isPrefixSlot =
       Field('isPrefixSlot', _$isPrefixSlot, opt: true, def: false);
+  static String _$content(StudyMaterial v) => v.content;
+  static const Field<StudyMaterial, String> _f$content =
+      Field('content', _$content, opt: true, def: '');
 
   @override
   final MappableFields<StudyMaterial> fields = const {
@@ -568,6 +571,7 @@ class StudyMaterialMapper extends ClassMapperBase<StudyMaterial> {
     #name: _f$name,
     #ownerId: _f$ownerId,
     #isPrefixSlot: _f$isPrefixSlot,
+    #content: _f$content,
   };
 
   static StudyMaterial _instantiate(DecodingData data) {
@@ -575,7 +579,8 @@ class StudyMaterialMapper extends ClassMapperBase<StudyMaterial> {
         id: data.dec(_f$id),
         name: data.dec(_f$name),
         ownerId: data.dec(_f$ownerId),
-        isPrefixSlot: data.dec(_f$isPrefixSlot));
+        isPrefixSlot: data.dec(_f$isPrefixSlot),
+        content: data.dec(_f$content));
   }
 
   @override
@@ -632,7 +637,12 @@ extension StudyMaterialValueCopy<$R, $Out>
 abstract class StudyMaterialCopyWith<$R, $In extends StudyMaterial, $Out>
     implements ModuleItemCopyWith<$R, $In, $Out> {
   @override
-  $R call({String? id, String? name, String? ownerId, bool? isPrefixSlot});
+  $R call(
+      {String? id,
+      String? name,
+      String? ownerId,
+      bool? isPrefixSlot,
+      String? content});
   StudyMaterialCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -649,19 +659,22 @@ class _StudyMaterialCopyWithImpl<$R, $Out>
           {Object? id = $none,
           String? name,
           Object? ownerId = $none,
-          bool? isPrefixSlot}) =>
+          bool? isPrefixSlot,
+          String? content}) =>
       $apply(FieldCopyWithData({
         if (id != $none) #id: id,
         if (name != null) #name: name,
         if (ownerId != $none) #ownerId: ownerId,
-        if (isPrefixSlot != null) #isPrefixSlot: isPrefixSlot
+        if (isPrefixSlot != null) #isPrefixSlot: isPrefixSlot,
+        if (content != null) #content: content
       }));
   @override
   StudyMaterial $make(CopyWithData data) => StudyMaterial(
       id: data.get(#id, or: $value.id),
       name: data.get(#name, or: $value.name),
       ownerId: data.get(#ownerId, or: $value.ownerId),
-      isPrefixSlot: data.get(#isPrefixSlot, or: $value.isPrefixSlot));
+      isPrefixSlot: data.get(#isPrefixSlot, or: $value.isPrefixSlot),
+      content: data.get(#content, or: $value.content));
 
   @override
   StudyMaterialCopyWith<$R2, StudyMaterial, $Out2> $chain<$R2, $Out2>(
@@ -697,6 +710,9 @@ class ModuleItemMapper extends ClassMapperBase<ModuleItem> {
   static bool _$isPrefixSlot(ModuleItem v) => v.isPrefixSlot;
   static const Field<ModuleItem, bool> _f$isPrefixSlot =
       Field('isPrefixSlot', _$isPrefixSlot, opt: true, def: false);
+  static String _$content(ModuleItem v) => v.content;
+  static const Field<ModuleItem, String> _f$content =
+      Field('content', _$content, opt: true, def: '');
 
   @override
   final MappableFields<ModuleItem> fields = const {
@@ -704,6 +720,7 @@ class ModuleItemMapper extends ClassMapperBase<ModuleItem> {
     #name: _f$name,
     #ownerId: _f$ownerId,
     #isPrefixSlot: _f$isPrefixSlot,
+    #content: _f$content,
   };
 
   static ModuleItem _instantiate(DecodingData data) {
@@ -731,7 +748,12 @@ mixin ModuleItemMappable {
 abstract class ModuleItemCopyWith<$R, $In extends ModuleItem, $Out>
     implements DataItemBaseCopyWith<$R, $In, $Out> {
   @override
-  $R call({String? id, String? name, String? ownerId, bool? isPrefixSlot});
+  $R call(
+      {String? id,
+      String? name,
+      String? ownerId,
+      bool? isPrefixSlot,
+      String? content});
   ModuleItemCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -761,6 +783,9 @@ class AssignmentMapper extends ClassMapperBase<Assignment> {
   static bool _$isPrefixSlot(Assignment v) => v.isPrefixSlot;
   static const Field<Assignment, bool> _f$isPrefixSlot =
       Field('isPrefixSlot', _$isPrefixSlot, opt: true, def: false);
+  static String _$content(Assignment v) => v.content;
+  static const Field<Assignment, String> _f$content =
+      Field('content', _$content, opt: true, def: '');
 
   @override
   final MappableFields<Assignment> fields = const {
@@ -768,6 +793,7 @@ class AssignmentMapper extends ClassMapperBase<Assignment> {
     #name: _f$name,
     #ownerId: _f$ownerId,
     #isPrefixSlot: _f$isPrefixSlot,
+    #content: _f$content,
   };
 
   static Assignment _instantiate(DecodingData data) {
@@ -775,7 +801,8 @@ class AssignmentMapper extends ClassMapperBase<Assignment> {
         id: data.dec(_f$id),
         name: data.dec(_f$name),
         ownerId: data.dec(_f$ownerId),
-        isPrefixSlot: data.dec(_f$isPrefixSlot));
+        isPrefixSlot: data.dec(_f$isPrefixSlot),
+        content: data.dec(_f$content));
   }
 
   @override
@@ -831,7 +858,12 @@ extension AssignmentValueCopy<$R, $Out>
 abstract class AssignmentCopyWith<$R, $In extends Assignment, $Out>
     implements ModuleItemCopyWith<$R, $In, $Out> {
   @override
-  $R call({String? id, String? name, String? ownerId, bool? isPrefixSlot});
+  $R call(
+      {String? id,
+      String? name,
+      String? ownerId,
+      bool? isPrefixSlot,
+      String? content});
   AssignmentCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -848,19 +880,22 @@ class _AssignmentCopyWithImpl<$R, $Out>
           {Object? id = $none,
           String? name,
           Object? ownerId = $none,
-          bool? isPrefixSlot}) =>
+          bool? isPrefixSlot,
+          String? content}) =>
       $apply(FieldCopyWithData({
         if (id != $none) #id: id,
         if (name != null) #name: name,
         if (ownerId != $none) #ownerId: ownerId,
-        if (isPrefixSlot != null) #isPrefixSlot: isPrefixSlot
+        if (isPrefixSlot != null) #isPrefixSlot: isPrefixSlot,
+        if (content != null) #content: content
       }));
   @override
   Assignment $make(CopyWithData data) => Assignment(
       id: data.get(#id, or: $value.id),
       name: data.get(#name, or: $value.name),
       ownerId: data.get(#ownerId, or: $value.ownerId),
-      isPrefixSlot: data.get(#isPrefixSlot, or: $value.isPrefixSlot));
+      isPrefixSlot: data.get(#isPrefixSlot, or: $value.isPrefixSlot),
+      content: data.get(#content, or: $value.content));
 
   @override
   AssignmentCopyWith<$R2, Assignment, $Out2> $chain<$R2, $Out2>(

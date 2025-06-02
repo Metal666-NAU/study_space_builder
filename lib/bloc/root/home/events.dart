@@ -58,3 +58,10 @@ class DeleteDataItem extends Event {
 
   const DeleteDataItem(this.dataItem);
 }
+
+class UpdateModuleItemContent extends Event {
+  final ModuleItem moduleItem;
+  final String content;
+
+  const UpdateModuleItemContent(this.moduleItem, this.content);
+}

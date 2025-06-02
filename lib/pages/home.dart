@@ -147,9 +147,9 @@ class HomePage extends StatelessWidget {
                 shrinkWrap: true,
                 children: state.projectModel.courses
                     .map(
-                      (final course) => SizedBox(
-                        width: courseElementWidth,
-                        child: SingleChildScrollView(
+                      (final course) => SingleChildScrollView(
+                        child: SizedBox(
+                          width: courseElementWidth,
                           child: block(
                             context: context,
                             dataItem: course,
@@ -189,7 +189,12 @@ class HomePage extends StatelessWidget {
                           width: courseElementWidth,
                           child: Center(
                             child: Text(
-                              candidateData.isEmpty ? '' : '> Add course <',
+                              candidateData.isEmpty
+                                  ? 'Drag a Course here...'
+                                  : '> Add course! <',
+                              style: context.textTheme.titleLarge?.copyWith(
+                                color: context.colorScheme.onSurfaceVariant,
+                              ),
                             ),
                           ),
                         ),
@@ -374,79 +379,151 @@ class HomePage extends StatelessWidget {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
             child: Padding(
               padding: const EdgeInsets.all(8),
-              child: Column(
-                children: [
-                  if (dataItem.hasPrefixSlot)
-                    if (prefixItem != null)
-                      buildNestedItems(items: [prefixItem])
-                    else if (isEditable)
-                      buildSlot(
-                        onWillAcceptWithDetails: (final details) {
-                          final canBePrefixedBy =
-                              dataItem.canBePrefixedBy(details.data);
-                          return canBePrefixedBy;
-                        },
-                        icon: Icons.keyboard_double_arrow_down,
-                        isPrefix: true,
-                      ),
-                  if (displayStyle != DisplayStyle.contentOnly)
-                    isEditable
-                        ? TextButton(
-                            onPressed: () async => _showRenameDialog(
-                              parentContext: context,
-                              dataItem: dataItem,
-                            ),
-                            child: Text(dataItem.name),
-                          )
-                        : Text(dataItem.name),
-                  if (displayStyle != DisplayStyle.titleOnly) ...[
-                    if (dataItem is Timestamp)
+              child: IntrinsicWidth(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (dataItem.hasPrefixSlot)
+                      if (prefixItem != null)
+                        buildNestedItems(items: [prefixItem])
+                      else if (isEditable)
+                        buildSlot(
+                          onWillAcceptWithDetails: (final details) {
+                            final canBePrefixedBy =
+                                dataItem.canBePrefixedBy(details.data);
+                            return canBePrefixedBy;
+                          },
+                          icon: Icons.keyboard_double_arrow_down,
+                          isPrefix: true,
+                        ),
+                    if (displayStyle != DisplayStyle.contentOnly)
                       isEditable
                           ? TextButton(
-                              onPressed: () async {
-                                final timestamp = await showDatePicker(
-                                  context: context,
-                                  firstDate: DateTime.utc(
-                                    2000,
-                                    1,
-                                    1,
-                                  ),
-                                  lastDate: DateTime.utc(
-                                    3000,
-                                    1,
-                                    1,
-                                  ),
-                                  currentDate: dataItem.valueDateTime,
-                                );
-
-                                if (timestamp == null) {
-                                  return;
-                                }
-
-                                if (!context.mounted) {
-                                  return;
-                                }
-
-                                context.read<home.Bloc>().add(
-                                      home.UpdateTimestamp(
-                                        dataItem,
-                                        timestamp.millisecondsSinceEpoch,
-                                      ),
-                                    );
-                              },
-                              child: prettyTimestamp(dataItem.valueDateTime),
+                              onPressed: () async => _showRenameDialog(
+                                parentContext: context,
+                                dataItem: dataItem,
+                              ),
+                              child: Text(dataItem.name),
                             )
-                          : prettyTimestamp(dataItem.valueDateTime),
-                    buildNestedItems(items: children?.call(dataItem) ?? []),
+                          : Text(dataItem.name),
+                    if (displayStyle != DisplayStyle.titleOnly) ...[
+                      if (dataItem is ModuleItem)
+                        Card(
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () async {
+                              final contentController =
+                                  TextEditingController(text: dataItem.content);
+
+                              await _showDialog(
+                                context: context,
+                                builder: (final dialogContext) => Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: Text(
+                                        dataItem.name,
+                                        style: context.textTheme.headlineSmall,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: TextField(
+                                        controller: contentController,
+                                        expands: true,
+                                        maxLines: null,
+                                        textAlignVertical:
+                                            TextAlignVertical.top,
+                                        decoration: InputDecoration(
+                                          icon: Column(
+                                            children: [
+                                              Icon(Icons.edit_document),
+                                            ],
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: context
+                                                  .colorScheme.primaryContainer,
+                                            ),
+                                          ),
+                                          filled: true,
+                                          fillColor:
+                                              context.colorScheme.surface,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (!context.mounted) {
+                                return;
+                              }
+
+                              context.read<home.Bloc>().add(
+                                    home.UpdateModuleItemContent(
+                                      dataItem,
+                                      contentController.text,
+                                    ),
+                                  );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Text(
+                                dataItem.content,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (dataItem is Timestamp)
+                        isEditable
+                            ? TextButton(
+                                onPressed: () async {
+                                  final timestamp = await showDatePicker(
+                                    context: context,
+                                    firstDate: DateTime.utc(
+                                      2000,
+                                      1,
+                                      1,
+                                    ),
+                                    lastDate: DateTime.utc(
+                                      3000,
+                                      1,
+                                      1,
+                                    ),
+                                    currentDate: dataItem.valueDateTime,
+                                  );
+
+                                  if (timestamp == null) {
+                                    return;
+                                  }
+
+                                  if (!context.mounted) {
+                                    return;
+                                  }
+
+                                  context.read<home.Bloc>().add(
+                                        home.UpdateTimestamp(
+                                          dataItem,
+                                          timestamp.millisecondsSinceEpoch,
+                                        ),
+                                      );
+                                },
+                                child: prettyTimestamp(dataItem.valueDateTime),
+                              )
+                            : prettyTimestamp(dataItem.valueDateTime),
+                      buildNestedItems(items: children?.call(dataItem) ?? []),
+                    ],
+                    if (isEditable && dataItem.hasChildrenSlots)
+                      buildSlot(
+                        onWillAcceptWithDetails: (final details) =>
+                            dataItem.canBeParentFor(details.data),
+                        icon: Icons.keyboard_double_arrow_up,
+                        isPrefix: false,
+                      ),
                   ],
-                  if (isEditable && dataItem.hasChildrenSlots)
-                    buildSlot(
-                      onWillAcceptWithDetails: (final details) =>
-                          dataItem.canBeParentFor(details.data),
-                      icon: Icons.keyboard_double_arrow_up,
-                      isPrefix: false,
-                    ),
-                ],
+                ),
               ),
             ),
           ),
@@ -536,7 +613,7 @@ class HomePage extends StatelessWidget {
 
   Future<void> _showDialog({
     required final BuildContext context,
-    required final Widget Function(BuildContext) builder,
+    required final Widget Function(BuildContext dialogContext) builder,
   }) =>
       showDialog(
         context: context,

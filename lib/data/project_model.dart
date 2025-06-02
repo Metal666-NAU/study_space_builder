@@ -105,11 +105,14 @@ class Module extends DataItemBase with ModuleMappable {
 
 @MappableClass()
 abstract class ModuleItem extends DataItemBase with ModuleItemMappable {
+  final String content;
+
   ModuleItem({
     super.id,
     super.name = 'Unnamed item',
     super.ownerId,
     super.isPrefixSlot,
+    this.content = '',
   });
 }
 
@@ -120,6 +123,7 @@ class StudyMaterial extends ModuleItem with StudyMaterialMappable {
     super.name = 'Material',
     super.ownerId,
     super.isPrefixSlot,
+    super.content,
   });
 }
 
@@ -130,6 +134,7 @@ class Assignment extends ModuleItem with AssignmentMappable {
     super.name = 'Assignment',
     super.ownerId,
     super.isPrefixSlot,
+    super.content,
   });
 }
 

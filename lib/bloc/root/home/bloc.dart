@@ -241,7 +241,7 @@ class Bloc extends flutter_bloc.Bloc<Event, State> {
         ),
       ),
     );
-    on<DeleteDataItem>((event, emit) {
+    on<DeleteDataItem>((final event, final emit) {
       var projectModel = state.projectModel;
 
       final dataItemId = event.dataItem.id;
@@ -272,7 +272,8 @@ class Bloc extends flutter_bloc.Bloc<Event, State> {
             projectModel = projectModel.copyWith(
               studyMaterials: projectModel.studyMaterials
                   .where(
-                      (final studyMaterial) => studyMaterial != event.dataItem)
+                    (final studyMaterial) => studyMaterial != event.dataItem,
+                  )
                   .toList(),
             );
 
@@ -317,6 +318,46 @@ class Bloc extends flutter_bloc.Bloc<Event, State> {
             .where((final timestamp) => timestamp.ownerId != dataItemId)
             .toList(),
       );
+
+      emit(state.copyWith(projectModel: () => projectModel));
+    });
+    on<UpdateModuleItemContent>((final event, final emit) {
+      var projectModel = state.projectModel;
+
+      switch (event.moduleItem) {
+        case StudyMaterial _:
+          {
+            projectModel = projectModel.copyWith(
+              studyMaterials: projectModel.studyMaterials
+                  .map(
+                    (final studyMaterial) => studyMaterial == event.moduleItem
+                        ? studyMaterial.copyWith(
+                            content: event.content,
+                          )
+                        : studyMaterial,
+                  )
+                  .toList(),
+            );
+
+            break;
+          }
+        case Assignment _:
+          {
+            projectModel = projectModel.copyWith(
+              assignments: projectModel.assignments
+                  .map(
+                    (final assignment) => assignment == event.moduleItem
+                        ? assignment.copyWith(
+                            content: event.content,
+                          )
+                        : assignment,
+                  )
+                  .toList(),
+            );
+
+            break;
+          }
+      }
 
       emit(state.copyWith(projectModel: () => projectModel));
     });
