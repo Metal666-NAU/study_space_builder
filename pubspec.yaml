@@ -1,0 +1,30 @@
+name: study_space_builder
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.6.0 <4.0.0"
+
+dependencies:
+  contextions: ^0.2.0
+  dart_mappable: ^4.5.0
+  filepicker_windows: ^2.1.4
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  intl: ^0.20.2
+  kalender: ^0.8.0
+  mason_cli: ^0.1.2
+  uuid: ^4.5.1
+  window_manager: ^0.5.0
+
+dev_dependencies:
+  build_runner: ^2.4.15
+  dart_mappable_builder: ^4.5.0
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
