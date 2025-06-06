@@ -24,6 +24,12 @@ class ToggleProjectLock extends Event {
   const ToggleProjectLock();
 }
 
+class RenameProject extends Event {
+  final String newName;
+
+  const RenameProject(this.newName);
+}
+
 class RenameDataItem extends Event {
   final String newName;
   final DataItemBase dataItem;
@@ -33,7 +39,7 @@ class RenameDataItem extends Event {
 
 class InsertDataItem extends Event {
   final DataItemBase dataItemToInsert;
-  final DataItemBase targetDataItem;
+  final DataItemBase? targetDataItem;
   final bool isPrefix;
 
   const InsertDataItem(

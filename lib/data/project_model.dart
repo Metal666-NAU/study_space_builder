@@ -3,23 +3,32 @@ import 'package:uuid/uuid.dart';
 
 part 'project_model.mapper.dart';
 
+abstract class IHasName {
+  String get name;
+}
+
 @MappableClass()
-abstract class DataItemBase with DataItemBaseMappable {
+abstract class DataItemBase with DataItemBaseMappable implements IHasName {
   final String id;
-  final String name;
+  final String? _name;
   final String? ownerId;
   final bool isPrefixSlot;
 
   bool get hasPrefixSlot => true;
   bool get hasChildrenSlots => true;
   DisplayStyle get displayStyle => DisplayStyle.full;
+  String get defaultName;
+
+  @override
+  String get name => _name ?? defaultName;
 
   DataItemBase({
-    required final String? id,
-    required this.name,
-    required this.ownerId,
+    final String? id,
+    final String? name,
+    this.ownerId,
     this.isPrefixSlot = false,
-  }) : id = id ?? Uuid().v4();
+  })  : id = id ?? Uuid().v4(),
+        _name = name;
 
   bool canBeParentFor(final DataItemBase childItem) => childItem is Timestamp;
   bool canBePrefixedBy(final DataItemBase prefixItem) =>
@@ -27,12 +36,15 @@ abstract class DataItemBase with DataItemBaseMappable {
 }
 
 @MappableClass()
-class ProjectModel extends DataItemBase with ProjectModelMappable {
+class ProjectModel with ProjectModelMappable implements IHasName {
   final List<Course> courses;
   final List<Module> modules;
   final List<StudyMaterial> studyMaterials;
   final List<Assignment> assignments;
   final List<Timestamp> timestamps;
+
+  @override
+  final String name;
 
   List<DataItemBase> get dataItems => [
         ...courses,
@@ -42,16 +54,14 @@ class ProjectModel extends DataItemBase with ProjectModelMappable {
         ...timestamps,
       ];
 
-  ProjectModel({
-    super.id,
-    super.name = 'Unnamed project',
-    super.isPrefixSlot,
+  const ProjectModel({
+    this.name = 'Unnamed project',
     this.courses = const [],
     this.modules = const [],
     this.studyMaterials = const [],
     this.assignments = const [],
     this.timestamps = const [],
-  }) : super(ownerId: null);
+  });
 
   DataItemBase? findPrefixFor(final DataItemBase ownerDataItem) => dataItems
       .where(
@@ -67,17 +77,16 @@ class ProjectModel extends DataItemBase with ProjectModelMappable {
                 !dataItem.isPrefixSlot,
           )
           .toList();
-
-  @override
-  bool canBeParentFor(final DataItemBase childItem) =>
-      super.canBeParentFor(childItem) || childItem is Course;
 }
 
 @MappableClass()
 class Course extends DataItemBase with CourseMappable {
+  @override
+  String get defaultName => 'Course';
+
   Course({
     super.id,
-    super.name = 'Unnamed course',
+    super.name,
     super.ownerId,
     super.isPrefixSlot,
   });
@@ -91,9 +100,12 @@ class Course extends DataItemBase with CourseMappable {
 
 @MappableClass()
 class Module extends DataItemBase with ModuleMappable {
+  @override
+  String get defaultName => 'Module';
+
   Module({
     super.id,
-    super.name = 'Unnamed module',
+    super.name,
     super.ownerId,
     super.isPrefixSlot,
   });
@@ -109,7 +121,7 @@ abstract class ModuleItem extends DataItemBase with ModuleItemMappable {
 
   ModuleItem({
     super.id,
-    super.name = 'Unnamed item',
+    super.name,
     super.ownerId,
     super.isPrefixSlot,
     this.content = '',
@@ -118,9 +130,12 @@ abstract class ModuleItem extends DataItemBase with ModuleItemMappable {
 
 @MappableClass()
 class StudyMaterial extends ModuleItem with StudyMaterialMappable {
+  @override
+  String get defaultName => 'Material';
+
   StudyMaterial({
     super.id,
-    super.name = 'Material',
+    super.name,
     super.ownerId,
     super.isPrefixSlot,
     super.content,
@@ -129,9 +144,12 @@ class StudyMaterial extends ModuleItem with StudyMaterialMappable {
 
 @MappableClass()
 class Assignment extends ModuleItem with AssignmentMappable {
+  @override
+  String get defaultName => 'Assignment';
+
   Assignment({
     super.id,
-    super.name = 'Assignment',
+    super.name,
     super.ownerId,
     super.isPrefixSlot,
     super.content,
@@ -150,13 +168,16 @@ class Timestamp extends DataItemBase with TimestampMappable {
   bool get hasChildrenSlots => false;
   @override
   DisplayStyle get displayStyle => DisplayStyle.contentOnly;
+  @override
+  String get defaultName => 'Timestamp';
 
   Timestamp({
     super.id,
+    super.name,
     super.ownerId,
     super.isPrefixSlot,
-    required this.value,
-  }) : super(name: 'Timestamp');
+    final int? value,
+  }) : value = value ?? DateTime.now().millisecondsSinceEpoch;
 
   @override
   bool canBeParentFor(final childItem) => false;
@@ -164,4 +185,8 @@ class Timestamp extends DataItemBase with TimestampMappable {
   bool canBePrefixedBy(final prefixItem) => false;
 }
 
-enum DisplayStyle { full, titleOnly, contentOnly }
+enum DisplayStyle {
+  full,
+  titleOnly,
+  contentOnly,
+}
