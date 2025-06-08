@@ -4,7 +4,7 @@ import 'package:contextions/contextions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/root/home/home.dart' as home;
-import '../data/project_model.dart';
+import '../data/model/project_model.dart';
 
 extension ContextExtensions on BuildContext {
   Future<void> showRenameDialog({
@@ -36,7 +36,7 @@ extension ContextExtensions on BuildContext {
               }
           }
         },
-        initialText: hasName.name,
+        initialText: hasName.name ?? '',
       );
 
   Future<void> showNameDialog({

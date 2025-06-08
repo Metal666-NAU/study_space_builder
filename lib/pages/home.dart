@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../bloc/root/home/home.dart' as home;
-import '../data/project_model.dart';
+import '../data/model/project_model.dart';
 
 import 'context_extensions.dart';
 import 'home/block.dart';
@@ -114,16 +114,12 @@ class HomePage extends StatelessWidget {
                       ),
                       child: Text(state.projectModel.name),
                     ),
-                    BlocBuilder<home.Bloc, home.State>(
-                      buildWhen: (final previous, final current) =>
-                          previous.projectLocked != current.projectLocked,
-                      builder: (final context, final state) => IconButton(
-                        onPressed: () => context
-                            .read<home.Bloc>()
-                            .add(home.ToggleProjectLock()),
-                        icon: Icon(
-                          state.projectLocked ? Icons.lock : Icons.lock_open,
-                        ),
+                    IconButton(
+                      onPressed: () => context
+                          .read<home.Bloc>()
+                          .add(home.ToggleProjectLock()),
+                      icon: Icon(
+                        state.projectLocked ? Icons.lock : Icons.lock_open,
                       ),
                     ),
                   ],
@@ -134,18 +130,16 @@ class HomePage extends StatelessWidget {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 shrinkWrap: true,
-                children: state.projectModel.courses
+                children: state.projectModel.dataItems
+                    .whereType<Course>()
                     .map(
                       (final course) => SingleChildScrollView(
                         child: SizedBox(
                           width: courseElementWidth,
                           child: Block(
                             dataItem: course,
-                            prefix: (final parentDataItem) => state.projectModel
-                                .findPrefixFor(parentDataItem),
-                            children: (final parentDataItem) => state
-                                .projectModel
-                                .findChildrenFor(parentDataItem),
+                            childResolver: (final childId) =>
+                                state.projectModel.getItemById(childId),
                             isEditable: !state.projectLocked,
                             isDraggable: !state.projectLocked,
                           ),

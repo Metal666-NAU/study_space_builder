@@ -5,13 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../bloc/root/home/home.dart' as home;
-import '../../data/project_model.dart';
+import '../../data/model/project_model.dart';
 import '../context_extensions.dart';
 
 class Block extends StatelessWidget {
   final DataItemBase _dataItem;
-  final DataItemBase? Function(DataItemBase)? prefix;
-  final List<DataItemBase> Function(DataItemBase)? children;
+  final DataItemBase Function(String)? _childResolver;
   final bool isEditable;
   final bool isDraggable;
   final DisplayStyle? displayStyle;
@@ -20,13 +19,13 @@ class Block extends StatelessWidget {
   Block({
     super.key,
     required final DataItemBase dataItem,
-    this.prefix,
-    this.children,
+    final DataItemBase Function(String)? childResolver,
     this.isEditable = false,
     this.isDraggable = true,
     final DisplayStyle? enforceDisplayStyle,
     this.depth = 0,
   })  : _dataItem = dataItem,
+        _childResolver = childResolver,
         displayStyle = enforceDisplayStyle ?? dataItem.displayStyle;
 
   factory Block.prefab({
@@ -41,7 +40,7 @@ class Block extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    final prefixItem = prefix?.call(_dataItem);
+    final prefixId = _dataItem.prefixId;
 
     return MenuAnchor(
       consumeOutsideTap: true,
@@ -51,7 +50,7 @@ class Block extends StatelessWidget {
                 home.DeleteDataItem(_dataItem),
               ),
           leadingIcon: Icon(Icons.delete_forever),
-          child: Text('Delete ${_dataItem.name}'),
+          child: Text('Delete ${_dataItem.nameOrDefault}'),
         ),
       ],
       builder: (
@@ -74,7 +73,7 @@ class Block extends StatelessWidget {
         absorbing: !isDraggable,
         child: Draggable(
           data: _dataItem,
-          feedback: Material(child: Text(_dataItem.name)),
+          feedback: Material(child: Text(_dataItem.nameOrDefault)),
           child: Card(
             elevation: (depth + 1).toDouble() * 1.5,
             surfaceTintColor: context.colorScheme.primary,
@@ -87,10 +86,10 @@ class Block extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     if (_dataItem.hasPrefixSlot)
-                      if (prefixItem != null)
+                      if (prefixId != null && _childResolver != null)
                         _buildNestedItems(
                           context: context,
-                          items: [prefixItem],
+                          items: [_childResolver(prefixId)],
                         )
                       else if (isEditable)
                         _buildSlot(
@@ -109,9 +108,9 @@ class Block extends StatelessWidget {
                               onPressed: () async => context.showRenameDialog(
                                 hasName: _dataItem,
                               ),
-                              child: Text(_dataItem.name),
+                              child: Text(_dataItem.nameOrDefault),
                             )
-                          : Text(_dataItem.name),
+                          : Text(_dataItem.nameOrDefault),
                     if (displayStyle != DisplayStyle.titleOnly) ...[
                       if (_dataItem is ModuleItem)
                         Card(
@@ -128,7 +127,7 @@ class Block extends StatelessWidget {
                                     Padding(
                                       padding: const EdgeInsets.all(8),
                                       child: Text(
-                                        _dataItem.name,
+                                        _dataItem.nameOrDefault,
                                         style: context.textTheme.headlineSmall,
                                       ),
                                     ),
@@ -225,12 +224,15 @@ class Block extends StatelessWidget {
                                 context: context,
                                 value: _dataItem.valueDateTime,
                               ),
-                      _buildNestedItems(
-                        context: context,
-                        items: children?.call(_dataItem) ?? [],
-                      ),
+                      if (_childResolver != null)
+                        _buildNestedItems(
+                          context: context,
+                          items: _dataItem.childrenIds
+                              .map((final childId) => _childResolver(childId))
+                              .toList(),
+                        ),
                     ],
-                    if (isEditable && _dataItem.hasChildrenSlots)
+                    if (isEditable && _dataItem.hasChildSlots)
                       _buildSlot(
                         context: context,
                         onWillAcceptWithDetails: (final details) =>
@@ -296,8 +298,7 @@ class Block extends StatelessWidget {
             .map(
               (final childDataItem) => Block(
                 dataItem: childDataItem,
-                prefix: prefix,
-                children: children,
+                childResolver: _childResolver,
                 isEditable: isEditable,
                 isDraggable: isDraggable,
                 depth: depth + 1,

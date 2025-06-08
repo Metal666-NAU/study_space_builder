@@ -1,7 +1,12 @@
 part of 'home.dart';
 
 class Bloc extends flutter_bloc.Bloc<Event, State> {
-  Bloc() : super(State()) {
+  final ProjectRepository _projectRepository;
+
+  Bloc({
+    required final ProjectRepository projectRepository,
+  })  : _projectRepository = projectRepository,
+        super(const State()) {
     on<Startup>((final event, final emit) {});
     on<NewProject>(
       (final event, final emit) => emit(
@@ -12,55 +17,30 @@ class Bloc extends flutter_bloc.Bloc<Event, State> {
       ),
     );
     on<LoadProject>((final event, final emit) async {
-      final openFilePicker = OpenFilePicker()
-        ..title = 'Open project...'
-        ..filterSpecification = {'JSON Document (*.json)': '*.json'}
-        ..defaultExtension = '.json';
+      try {
+        final (projectModel, projectPath) = await _projectRepository.get();
 
-      final file = openFilePicker.getFile();
-
-      if (file == null) {
+        emit(
+          state.copyWith(
+            projectPath: () => projectPath,
+            projectModel: () => projectModel,
+          ),
+        );
+      } on OperationCancelledException {
         return;
       }
-
-      final projectModel =
-          ProjectModelMapper.fromJson(await file.readAsString());
-
-      emit(
-        state.copyWith(
-          projectPath: () => file.path,
-          projectModel: () => projectModel,
-        ),
-      );
     });
     on<SaveProject>((final event, final emit) async {
-      final projectPath = state.projectPath;
-      final File projectFile;
+      try {
+        final projectPath = await _projectRepository.save(
+          state.projectPath,
+          state.projectModel,
+        );
 
-      if (projectPath == null) {
-        final saveFilePicker = SaveFilePicker()
-          ..title = 'Save project...'
-          ..filterSpecification = {
-            'JSON Document (*.json)': '*.json',
-            'All Files': '*.*',
-          }
-          ..fileName = '${state.projectModel.name}.json'
-          ..defaultExtension = '.json';
-
-        final file = saveFilePicker.getFile();
-
-        if (file == null) {
-          return;
-        }
-
-        projectFile = file;
-      } else {
-        projectFile = File(projectPath);
+        emit(state.copyWith(projectPath: () => projectPath));
+      } on OperationCancelledException {
+        return;
       }
-
-      await projectFile.writeAsString(state.projectModel.toJson());
-
-      emit(state.copyWith(projectPath: () => projectFile.path));
     });
     on<ToggleProjectLock>(
       (final event, final emit) => emit(
@@ -79,9 +59,8 @@ class Bloc extends flutter_bloc.Bloc<Event, State> {
     on<RenameDataItem>(
       (final event, final emit) => emit(
         state.copyWith(
-          projectModel: () => _updateDataItemCollection(
-            event.dataItem.runtimeType,
-            (final collection) => collection
+          projectModel: () => state.projectModel.copyWith(
+            dataItems: state.projectModel.dataItems
                 .map(
                   (final dataItem) => dataItem == event.dataItem
                       ? dataItem.copyWith(name: event.newName)
@@ -95,16 +74,50 @@ class Bloc extends flutter_bloc.Bloc<Event, State> {
     on<InsertDataItem>(
       (final event, final emit) => emit(
         state.copyWith(
-          projectModel: () => _updateDataItemCollection(
-            event.dataItemToInsert.runtimeType,
-            (final collection) => [
-              ...collection.where(
-                (final dataItem) => dataItem != event.dataItemToInsert,
+          projectModel: () => state.projectModel.copyWith(
+            dataItems: [
+              ...state.projectModel.dataItems.map(
+                (dataItem) {
+                  final alreadyHasAsChild =
+                      dataItem.childrenIds.contains(event.dataItemToInsert.id);
+                  final alreadyHasAsPrefix =
+                      dataItem.prefixId == event.dataItemToInsert.id;
+                  final shouldHaveAsChild = dataItem == event.parentDataItem;
+                  final shouldHaveAsPrefix =
+                      shouldHaveAsChild && event.isPrefix;
+
+                  if (alreadyHasAsChild) {
+                    dataItem = dataItem.copyWith(
+                      childrenIds: dataItem.childrenIds
+                          .where(
+                            (final childId) =>
+                                childId != event.dataItemToInsert.id,
+                          )
+                          .toList(),
+                    );
+                  }
+                  if (alreadyHasAsPrefix) {
+                    dataItem = dataItem.copyWith(prefixId: null);
+                  }
+
+                  if (shouldHaveAsPrefix) {
+                    dataItem =
+                        dataItem.copyWith(prefixId: event.dataItemToInsert.id);
+                  } else if (shouldHaveAsChild) {
+                    dataItem = dataItem.copyWith(
+                      childrenIds: [
+                        ...dataItem.childrenIds,
+                        event.dataItemToInsert.id,
+                      ],
+                    );
+                  }
+
+                  return dataItem;
+                },
               ),
-              event.dataItemToInsert.copyWith(
-                ownerId: event.targetDataItem?.id,
-                isPrefixSlot: event.isPrefix,
-              ),
+              if (!state.projectModel.dataItems
+                  .contains(event.dataItemToInsert))
+                event.dataItemToInsert,
             ],
           ),
         ),
@@ -114,114 +127,60 @@ class Bloc extends flutter_bloc.Bloc<Event, State> {
       (final event, final emit) => emit(
         state.copyWith(
           projectModel: () => state.projectModel.copyWith(
-            timestamps: state.projectModel.timestamps
+            dataItems: state.projectModel.dataItems
                 .map(
-                  (final timestamp) => timestamp == event.timestamp
-                      ? timestamp.copyWith(value: event.newValue)
-                      : timestamp,
+                  (final dataItem) => dataItem == event.timestamp
+                      ? (dataItem as Timestamp).copyWith(value: event.newValue)
+                      : dataItem,
                 )
                 .toList(),
           ),
         ),
       ),
     );
-    on<DeleteDataItem>((final event, final emit) {
-      var projectModel = state.projectModel;
+    on<DeleteDataItem>(
+      (final event, final emit) => emit(
+        state.copyWith(
+          projectModel: () => state.projectModel.copyWith(
+            dataItems: state.projectModel.dataItems
+                .where((final dataItem) => dataItem != event.dataItem)
+                .map(
+              (dataItem) {
+                if (dataItem.childrenIds.contains(event.dataItem.id)) {
+                  dataItem = dataItem.copyWith(
+                    childrenIds: dataItem.childrenIds
+                        .where(
+                          (final childId) => childId != event.dataItem.id,
+                        )
+                        .toList(),
+                  );
+                }
+                if (dataItem.prefixId == event.dataItem.id) {
+                  dataItem = dataItem.copyWith(prefixId: null);
+                }
 
-      final dataItemId = event.dataItem.id;
-
-      projectModel = _updateDataItemCollection(
-        event.dataItem.runtimeType,
-        (final collection) => collection
-            .where((final dataItem) => dataItem != event.dataItem)
-            .toList(),
-      );
-      projectModel = projectModel.copyWith(
-        courses: projectModel.courses
-            .where((final course) => course.ownerId != dataItemId)
-            .toList(),
-        modules: projectModel.modules
-            .where((final module) => module.ownerId != dataItemId)
-            .toList(),
-        studyMaterials: projectModel.studyMaterials
-            .where((final studyMaterial) => studyMaterial.ownerId != dataItemId)
-            .toList(),
-        assignments: projectModel.assignments
-            .where((final assignment) => assignment.ownerId != dataItemId)
-            .toList(),
-        timestamps: projectModel.timestamps
-            .where((final timestamp) => timestamp.ownerId != dataItemId)
-            .toList(),
-      );
-
-      emit(state.copyWith(projectModel: () => projectModel));
-    });
-    on<UpdateModuleItemContent>((final event, final emit) {
-      var projectModel = state.projectModel;
-
-      switch (event.moduleItem) {
-        case StudyMaterial _:
-          {
-            projectModel = projectModel.copyWith(
-              studyMaterials: projectModel.studyMaterials
-                  .map(
-                    (final studyMaterial) => studyMaterial == event.moduleItem
-                        ? studyMaterial.copyWith(
-                            content: event.content,
-                          )
-                        : studyMaterial,
-                  )
-                  .toList(),
-            );
-
-            break;
-          }
-        case Assignment _:
-          {
-            projectModel = projectModel.copyWith(
-              assignments: projectModel.assignments
-                  .map(
-                    (final assignment) => assignment == event.moduleItem
-                        ? assignment.copyWith(
-                            content: event.content,
-                          )
-                        : assignment,
-                  )
-                  .toList(),
-            );
-
-            break;
-          }
-      }
-
-      emit(state.copyWith(projectModel: () => projectModel));
-    });
-  }
-
-  ProjectModel _updateDataItemCollection(
-    final Type dataItemType,
-    final List<DataItemBase> Function(List<DataItemBase> collection) updater,
-  ) {
-    final projectModel = state.projectModel;
-
-    return switch (dataItemType) {
-      const (Course) => projectModel.copyWith(
-          courses: updater(projectModel.courses).cast<Course>(),
+                return dataItem;
+              },
+            ).toList(),
+          ),
         ),
-      const (Module) => projectModel.copyWith(
-          modules: updater(projectModel.modules).cast<Module>(),
+      ),
+    );
+    on<UpdateModuleItemContent>(
+      (final event, final emit) => emit(
+        state.copyWith(
+          projectModel: () => state.projectModel.copyWith(
+            dataItems: state.projectModel.dataItems
+                .map(
+                  (final dataItem) => dataItem == event.moduleItem
+                      ? (dataItem as ModuleItem)
+                          .copyWith(content: event.content)
+                      : dataItem,
+                )
+                .toList(),
+          ),
         ),
-      const (StudyMaterial) => projectModel.copyWith(
-          studyMaterials:
-              updater(projectModel.studyMaterials).cast<StudyMaterial>(),
-        ),
-      const (Assignment) => projectModel.copyWith(
-          assignments: updater(projectModel.assignments).cast<Assignment>(),
-        ),
-      const (Timestamp) => projectModel.copyWith(
-          timestamps: updater(projectModel.timestamps).cast<Timestamp>(),
-        ),
-      _ => projectModel,
-    };
+      ),
+    );
   }
 }

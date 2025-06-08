@@ -4,31 +4,30 @@ import 'package:uuid/uuid.dart';
 part 'project_model.mapper.dart';
 
 abstract class IHasName {
-  String get name;
+  String? get name;
 }
 
 @MappableClass()
 abstract class DataItemBase with DataItemBaseMappable implements IHasName {
   final String id;
-  final String? _name;
-  final String? ownerId;
-  final bool isPrefixSlot;
-
-  bool get hasPrefixSlot => true;
-  bool get hasChildrenSlots => true;
-  DisplayStyle get displayStyle => DisplayStyle.full;
-  String get defaultName;
+  final List<String> childrenIds;
+  final String? prefixId;
 
   @override
-  String get name => _name ?? defaultName;
+  final String? name;
+
+  bool get hasPrefixSlot => true;
+  bool get hasChildSlots => true;
+  DisplayStyle get displayStyle => DisplayStyle.full;
+  String get defaultName;
+  String get nameOrDefault => name ?? defaultName;
 
   DataItemBase({
     final String? id,
-    final String? name,
-    this.ownerId,
-    this.isPrefixSlot = false,
-  })  : id = id ?? Uuid().v4(),
-        _name = name;
+    this.name,
+    this.childrenIds = const [],
+    this.prefixId,
+  }) : id = id ?? Uuid().v4();
 
   bool canBeParentFor(final DataItemBase childItem) => childItem is Timestamp;
   bool canBePrefixedBy(final DataItemBase prefixItem) =>
@@ -36,47 +35,63 @@ abstract class DataItemBase with DataItemBaseMappable implements IHasName {
 }
 
 @MappableClass()
-class ProjectModel with ProjectModelMappable implements IHasName {
+class PackedProjectModel with PackedProjectModelMappable {
+  final String name;
   final List<Course> courses;
   final List<Module> modules;
   final List<StudyMaterial> studyMaterials;
   final List<Assignment> assignments;
   final List<Timestamp> timestamps;
 
+  const PackedProjectModel({
+    required this.name,
+    required this.courses,
+    required this.modules,
+    required this.studyMaterials,
+    required this.assignments,
+    required this.timestamps,
+  });
+
+  PackedProjectModel.fromModel(final ProjectModel projectModel)
+      : this(
+          name: projectModel.name,
+          courses: getDataItems<Course>(projectModel),
+          modules: getDataItems<Module>(projectModel),
+          studyMaterials: getDataItems<StudyMaterial>(projectModel),
+          assignments: getDataItems<Assignment>(projectModel),
+          timestamps: getDataItems<Timestamp>(projectModel),
+        );
+
+  static List<T> getDataItems<T>(final ProjectModel projectModel) =>
+      projectModel.dataItems.whereType<T>().toList();
+}
+
+@MappableClass()
+class ProjectModel with ProjectModelMappable implements IHasName {
+  final List<DataItemBase> dataItems;
+
   @override
   final String name;
 
-  List<DataItemBase> get dataItems => [
-        ...courses,
-        ...modules,
-        ...studyMaterials,
-        ...assignments,
-        ...timestamps,
-      ];
-
   const ProjectModel({
     this.name = 'Unnamed project',
-    this.courses = const [],
-    this.modules = const [],
-    this.studyMaterials = const [],
-    this.assignments = const [],
-    this.timestamps = const [],
+    this.dataItems = const [],
   });
 
-  DataItemBase? findPrefixFor(final DataItemBase ownerDataItem) => dataItems
-      .where(
-        (final dataItem) =>
-            (ownerDataItem.id == dataItem.ownerId) && dataItem.isPrefixSlot,
-      )
-      .firstOrNull;
-  List<DataItemBase> findChildrenFor(final DataItemBase ownerDataItem) =>
-      dataItems
-          .where(
-            (final dataItem) =>
-                (ownerDataItem.id == dataItem.ownerId) &&
-                !dataItem.isPrefixSlot,
-          )
-          .toList();
+  ProjectModel.fromPacked(final PackedProjectModel packedProjectModel)
+      : this(
+          name: packedProjectModel.name,
+          dataItems: [
+            ...packedProjectModel.courses,
+            ...packedProjectModel.modules,
+            ...packedProjectModel.studyMaterials,
+            ...packedProjectModel.assignments,
+            ...packedProjectModel.timestamps,
+          ],
+        );
+
+  DataItemBase getItemById(final String id) =>
+      dataItems.firstWhere((final dataItem) => dataItem.id == id);
 }
 
 @MappableClass()
@@ -87,8 +102,8 @@ class Course extends DataItemBase with CourseMappable {
   Course({
     super.id,
     super.name,
-    super.ownerId,
-    super.isPrefixSlot,
+    super.childrenIds,
+    super.prefixId,
   });
 
   @override
@@ -106,8 +121,8 @@ class Module extends DataItemBase with ModuleMappable {
   Module({
     super.id,
     super.name,
-    super.ownerId,
-    super.isPrefixSlot,
+    super.childrenIds,
+    super.prefixId,
   });
 
   @override
@@ -122,8 +137,8 @@ abstract class ModuleItem extends DataItemBase with ModuleItemMappable {
   ModuleItem({
     super.id,
     super.name,
-    super.ownerId,
-    super.isPrefixSlot,
+    super.childrenIds,
+    super.prefixId,
     this.content = '',
   });
 }
@@ -136,8 +151,8 @@ class StudyMaterial extends ModuleItem with StudyMaterialMappable {
   StudyMaterial({
     super.id,
     super.name,
-    super.ownerId,
-    super.isPrefixSlot,
+    super.childrenIds,
+    super.prefixId,
     super.content,
   });
 }
@@ -150,8 +165,8 @@ class Assignment extends ModuleItem with AssignmentMappable {
   Assignment({
     super.id,
     super.name,
-    super.ownerId,
-    super.isPrefixSlot,
+    super.childrenIds,
+    super.prefixId,
     super.content,
   });
 }
@@ -165,7 +180,7 @@ class Timestamp extends DataItemBase with TimestampMappable {
   @override
   bool get hasPrefixSlot => false;
   @override
-  bool get hasChildrenSlots => false;
+  bool get hasChildSlots => false;
   @override
   DisplayStyle get displayStyle => DisplayStyle.contentOnly;
   @override
@@ -174,8 +189,8 @@ class Timestamp extends DataItemBase with TimestampMappable {
   Timestamp({
     super.id,
     super.name,
-    super.ownerId,
-    super.isPrefixSlot,
+    super.childrenIds,
+    super.prefixId,
     final int? value,
   }) : value = value ?? DateTime.now().millisecondsSinceEpoch;
 

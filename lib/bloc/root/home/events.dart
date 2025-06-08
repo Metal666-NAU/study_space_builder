@@ -39,12 +39,12 @@ class RenameDataItem extends Event {
 
 class InsertDataItem extends Event {
   final DataItemBase dataItemToInsert;
-  final DataItemBase? targetDataItem;
+  final DataItemBase? parentDataItem;
   final bool isPrefix;
 
   const InsertDataItem(
     this.dataItemToInsert,
-    this.targetDataItem,
+    this.parentDataItem,
     this.isPrefix,
   );
 }

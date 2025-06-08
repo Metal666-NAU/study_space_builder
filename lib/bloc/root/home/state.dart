@@ -5,11 +5,11 @@ class State {
   final ProjectModel projectModel;
   final bool projectLocked;
 
-  State({
+  const State({
     this.projectPath,
     final ProjectModel? projectModel,
     this.projectLocked = false,
-  }) : projectModel = projectModel ?? ProjectModel();
+  }) : projectModel = projectModel ?? const ProjectModel();
 
   State copyWith({
     final String? Function()? projectPath,

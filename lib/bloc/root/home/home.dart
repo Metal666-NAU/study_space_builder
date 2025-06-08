@@ -1,11 +1,10 @@
 library;
 
-import 'dart:io';
-
-import 'package:filepicker_windows/filepicker_windows.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' as flutter_bloc;
 
-import '../../../data/project_model.dart';
+import '../../../data/api/project_api.dart';
+import '../../../data/model/project_model.dart';
+import '../../../data/repositories/project_repository.dart';
 
 part 'bloc.dart';
 part 'events.dart';

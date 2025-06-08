@@ -26,22 +26,22 @@ class DataItemBaseMapper extends ClassMapperBase<DataItemBase> {
 
   static String _$id(DataItemBase v) => v.id;
   static const Field<DataItemBase, String> _f$id = Field('id', _$id, opt: true);
-  static String? _$_name(DataItemBase v) => v._name;
-  static const Field<DataItemBase, String> _f$_name =
-      Field('_name', _$_name, key: r'name', opt: true);
-  static String? _$ownerId(DataItemBase v) => v.ownerId;
-  static const Field<DataItemBase, String> _f$ownerId =
-      Field('ownerId', _$ownerId, opt: true);
-  static bool _$isPrefixSlot(DataItemBase v) => v.isPrefixSlot;
-  static const Field<DataItemBase, bool> _f$isPrefixSlot =
-      Field('isPrefixSlot', _$isPrefixSlot, opt: true, def: false);
+  static String? _$name(DataItemBase v) => v.name;
+  static const Field<DataItemBase, String> _f$name =
+      Field('name', _$name, opt: true);
+  static List<String> _$childrenIds(DataItemBase v) => v.childrenIds;
+  static const Field<DataItemBase, List<String>> _f$childrenIds =
+      Field('childrenIds', _$childrenIds, opt: true, def: const []);
+  static String? _$prefixId(DataItemBase v) => v.prefixId;
+  static const Field<DataItemBase, String> _f$prefixId =
+      Field('prefixId', _$prefixId, opt: true);
 
   @override
   final MappableFields<DataItemBase> fields = const {
     #id: _f$id,
-    #_name: _f$_name,
-    #ownerId: _f$ownerId,
-    #isPrefixSlot: _f$isPrefixSlot,
+    #name: _f$name,
+    #childrenIds: _f$childrenIds,
+    #prefixId: _f$prefixId,
   };
 
   static DataItemBase _instantiate(DecodingData data) {
@@ -68,17 +68,19 @@ mixin DataItemBaseMappable {
 
 abstract class DataItemBaseCopyWith<$R, $In extends DataItemBase, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  $R call({String? id, String? name, String? ownerId, bool? isPrefixSlot});
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>?> get childrenIds;
+  $R call(
+      {String? id, String? name, List<String>? childrenIds, String? prefixId});
   DataItemBaseCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
-class ProjectModelMapper extends ClassMapperBase<ProjectModel> {
-  ProjectModelMapper._();
+class PackedProjectModelMapper extends ClassMapperBase<PackedProjectModel> {
+  PackedProjectModelMapper._();
 
-  static ProjectModelMapper? _instance;
-  static ProjectModelMapper ensureInitialized() {
+  static PackedProjectModelMapper? _instance;
+  static PackedProjectModelMapper ensureInitialized() {
     if (_instance == null) {
-      MapperContainer.globals.use(_instance = ProjectModelMapper._());
+      MapperContainer.globals.use(_instance = PackedProjectModelMapper._());
       CourseMapper.ensureInitialized();
       ModuleMapper.ensureInitialized();
       StudyMaterialMapper.ensureInitialized();
@@ -89,30 +91,30 @@ class ProjectModelMapper extends ClassMapperBase<ProjectModel> {
   }
 
   @override
-  final String id = 'ProjectModel';
+  final String id = 'PackedProjectModel';
 
-  static String _$name(ProjectModel v) => v.name;
-  static const Field<ProjectModel, String> _f$name =
-      Field('name', _$name, opt: true, def: 'Unnamed project');
-  static List<Course> _$courses(ProjectModel v) => v.courses;
-  static const Field<ProjectModel, List<Course>> _f$courses =
-      Field('courses', _$courses, opt: true, def: const []);
-  static List<Module> _$modules(ProjectModel v) => v.modules;
-  static const Field<ProjectModel, List<Module>> _f$modules =
-      Field('modules', _$modules, opt: true, def: const []);
-  static List<StudyMaterial> _$studyMaterials(ProjectModel v) =>
+  static String _$name(PackedProjectModel v) => v.name;
+  static const Field<PackedProjectModel, String> _f$name =
+      Field('name', _$name);
+  static List<Course> _$courses(PackedProjectModel v) => v.courses;
+  static const Field<PackedProjectModel, List<Course>> _f$courses =
+      Field('courses', _$courses);
+  static List<Module> _$modules(PackedProjectModel v) => v.modules;
+  static const Field<PackedProjectModel, List<Module>> _f$modules =
+      Field('modules', _$modules);
+  static List<StudyMaterial> _$studyMaterials(PackedProjectModel v) =>
       v.studyMaterials;
-  static const Field<ProjectModel, List<StudyMaterial>> _f$studyMaterials =
-      Field('studyMaterials', _$studyMaterials, opt: true, def: const []);
-  static List<Assignment> _$assignments(ProjectModel v) => v.assignments;
-  static const Field<ProjectModel, List<Assignment>> _f$assignments =
-      Field('assignments', _$assignments, opt: true, def: const []);
-  static List<Timestamp> _$timestamps(ProjectModel v) => v.timestamps;
-  static const Field<ProjectModel, List<Timestamp>> _f$timestamps =
-      Field('timestamps', _$timestamps, opt: true, def: const []);
+  static const Field<PackedProjectModel, List<StudyMaterial>>
+      _f$studyMaterials = Field('studyMaterials', _$studyMaterials);
+  static List<Assignment> _$assignments(PackedProjectModel v) => v.assignments;
+  static const Field<PackedProjectModel, List<Assignment>> _f$assignments =
+      Field('assignments', _$assignments);
+  static List<Timestamp> _$timestamps(PackedProjectModel v) => v.timestamps;
+  static const Field<PackedProjectModel, List<Timestamp>> _f$timestamps =
+      Field('timestamps', _$timestamps);
 
   @override
-  final MappableFields<ProjectModel> fields = const {
+  final MappableFields<PackedProjectModel> fields = const {
     #name: _f$name,
     #courses: _f$courses,
     #modules: _f$modules,
@@ -121,8 +123,8 @@ class ProjectModelMapper extends ClassMapperBase<ProjectModel> {
     #timestamps: _f$timestamps,
   };
 
-  static ProjectModel _instantiate(DecodingData data) {
-    return ProjectModel(
+  static PackedProjectModel _instantiate(DecodingData data) {
+    return PackedProjectModel(
         name: data.dec(_f$name),
         courses: data.dec(_f$courses),
         modules: data.dec(_f$modules),
@@ -134,56 +136,58 @@ class ProjectModelMapper extends ClassMapperBase<ProjectModel> {
   @override
   final Function instantiate = _instantiate;
 
-  static ProjectModel fromMap(Map<String, dynamic> map) {
-    return ensureInitialized().decodeMap<ProjectModel>(map);
+  static PackedProjectModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<PackedProjectModel>(map);
   }
 
-  static ProjectModel fromJson(String json) {
-    return ensureInitialized().decodeJson<ProjectModel>(json);
+  static PackedProjectModel fromJson(String json) {
+    return ensureInitialized().decodeJson<PackedProjectModel>(json);
   }
 }
 
-mixin ProjectModelMappable {
+mixin PackedProjectModelMappable {
   String toJson() {
-    return ProjectModelMapper.ensureInitialized()
-        .encodeJson<ProjectModel>(this as ProjectModel);
+    return PackedProjectModelMapper.ensureInitialized()
+        .encodeJson<PackedProjectModel>(this as PackedProjectModel);
   }
 
   Map<String, dynamic> toMap() {
-    return ProjectModelMapper.ensureInitialized()
-        .encodeMap<ProjectModel>(this as ProjectModel);
+    return PackedProjectModelMapper.ensureInitialized()
+        .encodeMap<PackedProjectModel>(this as PackedProjectModel);
   }
 
-  ProjectModelCopyWith<ProjectModel, ProjectModel, ProjectModel> get copyWith =>
-      _ProjectModelCopyWithImpl<ProjectModel, ProjectModel>(
-          this as ProjectModel, $identity, $identity);
+  PackedProjectModelCopyWith<PackedProjectModel, PackedProjectModel,
+          PackedProjectModel>
+      get copyWith => _PackedProjectModelCopyWithImpl<PackedProjectModel,
+          PackedProjectModel>(this as PackedProjectModel, $identity, $identity);
   @override
   String toString() {
-    return ProjectModelMapper.ensureInitialized()
-        .stringifyValue(this as ProjectModel);
+    return PackedProjectModelMapper.ensureInitialized()
+        .stringifyValue(this as PackedProjectModel);
   }
 
   @override
   bool operator ==(Object other) {
-    return ProjectModelMapper.ensureInitialized()
-        .equalsValue(this as ProjectModel, other);
+    return PackedProjectModelMapper.ensureInitialized()
+        .equalsValue(this as PackedProjectModel, other);
   }
 
   @override
   int get hashCode {
-    return ProjectModelMapper.ensureInitialized()
-        .hashValue(this as ProjectModel);
+    return PackedProjectModelMapper.ensureInitialized()
+        .hashValue(this as PackedProjectModel);
   }
 }
 
-extension ProjectModelValueCopy<$R, $Out>
-    on ObjectCopyWith<$R, ProjectModel, $Out> {
-  ProjectModelCopyWith<$R, ProjectModel, $Out> get $asProjectModel =>
-      $base.as((v, t, t2) => _ProjectModelCopyWithImpl<$R, $Out>(v, t, t2));
+extension PackedProjectModelValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, PackedProjectModel, $Out> {
+  PackedProjectModelCopyWith<$R, PackedProjectModel, $Out>
+      get $asPackedProjectModel => $base.as(
+          (v, t, t2) => _PackedProjectModelCopyWithImpl<$R, $Out>(v, t, t2));
 }
 
-abstract class ProjectModelCopyWith<$R, $In extends ProjectModel, $Out>
-    implements ClassCopyWith<$R, $In, $Out> {
+abstract class PackedProjectModelCopyWith<$R, $In extends PackedProjectModel,
+    $Out> implements ClassCopyWith<$R, $In, $Out> {
   ListCopyWith<$R, Course, CourseCopyWith<$R, Course, Course>> get courses;
   ListCopyWith<$R, Module, ModuleCopyWith<$R, Module, Module>> get modules;
   ListCopyWith<$R, StudyMaterial,
@@ -200,17 +204,18 @@ abstract class ProjectModelCopyWith<$R, $In extends ProjectModel, $Out>
       List<StudyMaterial>? studyMaterials,
       List<Assignment>? assignments,
       List<Timestamp>? timestamps});
-  ProjectModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+  PackedProjectModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
 }
 
-class _ProjectModelCopyWithImpl<$R, $Out>
-    extends ClassCopyWithBase<$R, ProjectModel, $Out>
-    implements ProjectModelCopyWith<$R, ProjectModel, $Out> {
-  _ProjectModelCopyWithImpl(super.value, super.then, super.then2);
+class _PackedProjectModelCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, PackedProjectModel, $Out>
+    implements PackedProjectModelCopyWith<$R, PackedProjectModel, $Out> {
+  _PackedProjectModelCopyWithImpl(super.value, super.then, super.then2);
 
   @override
-  late final ClassMapperBase<ProjectModel> $mapper =
-      ProjectModelMapper.ensureInitialized();
+  late final ClassMapperBase<PackedProjectModel> $mapper =
+      PackedProjectModelMapper.ensureInitialized();
   @override
   ListCopyWith<$R, Course, CourseCopyWith<$R, Course, Course>> get courses =>
       ListCopyWith($value.courses, (v, t) => v.copyWith.$chain(t),
@@ -249,7 +254,7 @@ class _ProjectModelCopyWithImpl<$R, $Out>
         if (timestamps != null) #timestamps: timestamps
       }));
   @override
-  ProjectModel $make(CopyWithData data) => ProjectModel(
+  PackedProjectModel $make(CopyWithData data) => PackedProjectModel(
       name: data.get(#name, or: $value.name),
       courses: data.get(#courses, or: $value.courses),
       modules: data.get(#modules, or: $value.modules),
@@ -258,9 +263,9 @@ class _ProjectModelCopyWithImpl<$R, $Out>
       timestamps: data.get(#timestamps, or: $value.timestamps));
 
   @override
-  ProjectModelCopyWith<$R2, ProjectModel, $Out2> $chain<$R2, $Out2>(
+  PackedProjectModelCopyWith<$R2, PackedProjectModel, $Out2> $chain<$R2, $Out2>(
           Then<$Out2, $R2> t) =>
-      _ProjectModelCopyWithImpl<$R2, $Out2>($value, $cast, t);
+      _PackedProjectModelCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
 class CourseMapper extends ClassMapperBase<Course> {
@@ -280,30 +285,29 @@ class CourseMapper extends ClassMapperBase<Course> {
 
   static String _$id(Course v) => v.id;
   static const Field<Course, String> _f$id = Field('id', _$id, opt: true);
-  static String? _$_name(Course v) => v._name;
-  static const Field<Course, String> _f$_name =
-      Field('_name', _$_name, key: r'name', opt: true);
-  static String? _$ownerId(Course v) => v.ownerId;
-  static const Field<Course, String> _f$ownerId =
-      Field('ownerId', _$ownerId, opt: true);
-  static bool _$isPrefixSlot(Course v) => v.isPrefixSlot;
-  static const Field<Course, bool> _f$isPrefixSlot =
-      Field('isPrefixSlot', _$isPrefixSlot, opt: true, def: false);
+  static String? _$name(Course v) => v.name;
+  static const Field<Course, String> _f$name = Field('name', _$name, opt: true);
+  static List<String> _$childrenIds(Course v) => v.childrenIds;
+  static const Field<Course, List<String>> _f$childrenIds =
+      Field('childrenIds', _$childrenIds, opt: true, def: const []);
+  static String? _$prefixId(Course v) => v.prefixId;
+  static const Field<Course, String> _f$prefixId =
+      Field('prefixId', _$prefixId, opt: true);
 
   @override
   final MappableFields<Course> fields = const {
     #id: _f$id,
-    #_name: _f$_name,
-    #ownerId: _f$ownerId,
-    #isPrefixSlot: _f$isPrefixSlot,
+    #name: _f$name,
+    #childrenIds: _f$childrenIds,
+    #prefixId: _f$prefixId,
   };
 
   static Course _instantiate(DecodingData data) {
     return Course(
         id: data.dec(_f$id),
-        name: data.dec(_f$_name),
-        ownerId: data.dec(_f$ownerId),
-        isPrefixSlot: data.dec(_f$isPrefixSlot));
+        name: data.dec(_f$name),
+        childrenIds: data.dec(_f$childrenIds),
+        prefixId: data.dec(_f$prefixId));
   }
 
   @override
@@ -353,7 +357,10 @@ extension CourseValueCopy<$R, $Out> on ObjectCopyWith<$R, Course, $Out> {
 abstract class CourseCopyWith<$R, $In extends Course, $Out>
     implements DataItemBaseCopyWith<$R, $In, $Out> {
   @override
-  $R call({String? id, String? name, String? ownerId, bool? isPrefixSlot});
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get childrenIds;
+  @override
+  $R call(
+      {String? id, String? name, List<String>? childrenIds, String? prefixId});
   CourseCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -364,23 +371,29 @@ class _CourseCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Course, $Out>
   @override
   late final ClassMapperBase<Course> $mapper = CourseMapper.ensureInitialized();
   @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>
+      get childrenIds => ListCopyWith(
+          $value.childrenIds,
+          (v, t) => ObjectCopyWith(v, $identity, t),
+          (v) => call(childrenIds: v));
+  @override
   $R call(
           {Object? id = $none,
           Object? name = $none,
-          Object? ownerId = $none,
-          bool? isPrefixSlot}) =>
+          List<String>? childrenIds,
+          Object? prefixId = $none}) =>
       $apply(FieldCopyWithData({
         if (id != $none) #id: id,
         if (name != $none) #name: name,
-        if (ownerId != $none) #ownerId: ownerId,
-        if (isPrefixSlot != null) #isPrefixSlot: isPrefixSlot
+        if (childrenIds != null) #childrenIds: childrenIds,
+        if (prefixId != $none) #prefixId: prefixId
       }));
   @override
   Course $make(CopyWithData data) => Course(
       id: data.get(#id, or: $value.id),
-      name: data.get(#name, or: $value._name),
-      ownerId: data.get(#ownerId, or: $value.ownerId),
-      isPrefixSlot: data.get(#isPrefixSlot, or: $value.isPrefixSlot));
+      name: data.get(#name, or: $value.name),
+      childrenIds: data.get(#childrenIds, or: $value.childrenIds),
+      prefixId: data.get(#prefixId, or: $value.prefixId));
 
   @override
   CourseCopyWith<$R2, Course, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
@@ -404,30 +417,29 @@ class ModuleMapper extends ClassMapperBase<Module> {
 
   static String _$id(Module v) => v.id;
   static const Field<Module, String> _f$id = Field('id', _$id, opt: true);
-  static String? _$_name(Module v) => v._name;
-  static const Field<Module, String> _f$_name =
-      Field('_name', _$_name, key: r'name', opt: true);
-  static String? _$ownerId(Module v) => v.ownerId;
-  static const Field<Module, String> _f$ownerId =
-      Field('ownerId', _$ownerId, opt: true);
-  static bool _$isPrefixSlot(Module v) => v.isPrefixSlot;
-  static const Field<Module, bool> _f$isPrefixSlot =
-      Field('isPrefixSlot', _$isPrefixSlot, opt: true, def: false);
+  static String? _$name(Module v) => v.name;
+  static const Field<Module, String> _f$name = Field('name', _$name, opt: true);
+  static List<String> _$childrenIds(Module v) => v.childrenIds;
+  static const Field<Module, List<String>> _f$childrenIds =
+      Field('childrenIds', _$childrenIds, opt: true, def: const []);
+  static String? _$prefixId(Module v) => v.prefixId;
+  static const Field<Module, String> _f$prefixId =
+      Field('prefixId', _$prefixId, opt: true);
 
   @override
   final MappableFields<Module> fields = const {
     #id: _f$id,
-    #_name: _f$_name,
-    #ownerId: _f$ownerId,
-    #isPrefixSlot: _f$isPrefixSlot,
+    #name: _f$name,
+    #childrenIds: _f$childrenIds,
+    #prefixId: _f$prefixId,
   };
 
   static Module _instantiate(DecodingData data) {
     return Module(
         id: data.dec(_f$id),
-        name: data.dec(_f$_name),
-        ownerId: data.dec(_f$ownerId),
-        isPrefixSlot: data.dec(_f$isPrefixSlot));
+        name: data.dec(_f$name),
+        childrenIds: data.dec(_f$childrenIds),
+        prefixId: data.dec(_f$prefixId));
   }
 
   @override
@@ -477,7 +489,10 @@ extension ModuleValueCopy<$R, $Out> on ObjectCopyWith<$R, Module, $Out> {
 abstract class ModuleCopyWith<$R, $In extends Module, $Out>
     implements DataItemBaseCopyWith<$R, $In, $Out> {
   @override
-  $R call({String? id, String? name, String? ownerId, bool? isPrefixSlot});
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get childrenIds;
+  @override
+  $R call(
+      {String? id, String? name, List<String>? childrenIds, String? prefixId});
   ModuleCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -488,23 +503,29 @@ class _ModuleCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Module, $Out>
   @override
   late final ClassMapperBase<Module> $mapper = ModuleMapper.ensureInitialized();
   @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>
+      get childrenIds => ListCopyWith(
+          $value.childrenIds,
+          (v, t) => ObjectCopyWith(v, $identity, t),
+          (v) => call(childrenIds: v));
+  @override
   $R call(
           {Object? id = $none,
           Object? name = $none,
-          Object? ownerId = $none,
-          bool? isPrefixSlot}) =>
+          List<String>? childrenIds,
+          Object? prefixId = $none}) =>
       $apply(FieldCopyWithData({
         if (id != $none) #id: id,
         if (name != $none) #name: name,
-        if (ownerId != $none) #ownerId: ownerId,
-        if (isPrefixSlot != null) #isPrefixSlot: isPrefixSlot
+        if (childrenIds != null) #childrenIds: childrenIds,
+        if (prefixId != $none) #prefixId: prefixId
       }));
   @override
   Module $make(CopyWithData data) => Module(
       id: data.get(#id, or: $value.id),
-      name: data.get(#name, or: $value._name),
-      ownerId: data.get(#ownerId, or: $value.ownerId),
-      isPrefixSlot: data.get(#isPrefixSlot, or: $value.isPrefixSlot));
+      name: data.get(#name, or: $value.name),
+      childrenIds: data.get(#childrenIds, or: $value.childrenIds),
+      prefixId: data.get(#prefixId, or: $value.prefixId));
 
   @override
   ModuleCopyWith<$R2, Module, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
@@ -529,15 +550,15 @@ class StudyMaterialMapper extends ClassMapperBase<StudyMaterial> {
   static String _$id(StudyMaterial v) => v.id;
   static const Field<StudyMaterial, String> _f$id =
       Field('id', _$id, opt: true);
-  static String? _$_name(StudyMaterial v) => v._name;
-  static const Field<StudyMaterial, String> _f$_name =
-      Field('_name', _$_name, key: r'name', opt: true);
-  static String? _$ownerId(StudyMaterial v) => v.ownerId;
-  static const Field<StudyMaterial, String> _f$ownerId =
-      Field('ownerId', _$ownerId, opt: true);
-  static bool _$isPrefixSlot(StudyMaterial v) => v.isPrefixSlot;
-  static const Field<StudyMaterial, bool> _f$isPrefixSlot =
-      Field('isPrefixSlot', _$isPrefixSlot, opt: true, def: false);
+  static String? _$name(StudyMaterial v) => v.name;
+  static const Field<StudyMaterial, String> _f$name =
+      Field('name', _$name, opt: true);
+  static List<String> _$childrenIds(StudyMaterial v) => v.childrenIds;
+  static const Field<StudyMaterial, List<String>> _f$childrenIds =
+      Field('childrenIds', _$childrenIds, opt: true, def: const []);
+  static String? _$prefixId(StudyMaterial v) => v.prefixId;
+  static const Field<StudyMaterial, String> _f$prefixId =
+      Field('prefixId', _$prefixId, opt: true);
   static String _$content(StudyMaterial v) => v.content;
   static const Field<StudyMaterial, String> _f$content =
       Field('content', _$content, opt: true, def: '');
@@ -545,18 +566,18 @@ class StudyMaterialMapper extends ClassMapperBase<StudyMaterial> {
   @override
   final MappableFields<StudyMaterial> fields = const {
     #id: _f$id,
-    #_name: _f$_name,
-    #ownerId: _f$ownerId,
-    #isPrefixSlot: _f$isPrefixSlot,
+    #name: _f$name,
+    #childrenIds: _f$childrenIds,
+    #prefixId: _f$prefixId,
     #content: _f$content,
   };
 
   static StudyMaterial _instantiate(DecodingData data) {
     return StudyMaterial(
         id: data.dec(_f$id),
-        name: data.dec(_f$_name),
-        ownerId: data.dec(_f$ownerId),
-        isPrefixSlot: data.dec(_f$isPrefixSlot),
+        name: data.dec(_f$name),
+        childrenIds: data.dec(_f$childrenIds),
+        prefixId: data.dec(_f$prefixId),
         content: data.dec(_f$content));
   }
 
@@ -614,11 +635,13 @@ extension StudyMaterialValueCopy<$R, $Out>
 abstract class StudyMaterialCopyWith<$R, $In extends StudyMaterial, $Out>
     implements ModuleItemCopyWith<$R, $In, $Out> {
   @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get childrenIds;
+  @override
   $R call(
       {String? id,
       String? name,
-      String? ownerId,
-      bool? isPrefixSlot,
+      List<String>? childrenIds,
+      String? prefixId,
       String? content});
   StudyMaterialCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -632,25 +655,31 @@ class _StudyMaterialCopyWithImpl<$R, $Out>
   late final ClassMapperBase<StudyMaterial> $mapper =
       StudyMaterialMapper.ensureInitialized();
   @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>
+      get childrenIds => ListCopyWith(
+          $value.childrenIds,
+          (v, t) => ObjectCopyWith(v, $identity, t),
+          (v) => call(childrenIds: v));
+  @override
   $R call(
           {Object? id = $none,
           Object? name = $none,
-          Object? ownerId = $none,
-          bool? isPrefixSlot,
+          List<String>? childrenIds,
+          Object? prefixId = $none,
           String? content}) =>
       $apply(FieldCopyWithData({
         if (id != $none) #id: id,
         if (name != $none) #name: name,
-        if (ownerId != $none) #ownerId: ownerId,
-        if (isPrefixSlot != null) #isPrefixSlot: isPrefixSlot,
+        if (childrenIds != null) #childrenIds: childrenIds,
+        if (prefixId != $none) #prefixId: prefixId,
         if (content != null) #content: content
       }));
   @override
   StudyMaterial $make(CopyWithData data) => StudyMaterial(
       id: data.get(#id, or: $value.id),
-      name: data.get(#name, or: $value._name),
-      ownerId: data.get(#ownerId, or: $value.ownerId),
-      isPrefixSlot: data.get(#isPrefixSlot, or: $value.isPrefixSlot),
+      name: data.get(#name, or: $value.name),
+      childrenIds: data.get(#childrenIds, or: $value.childrenIds),
+      prefixId: data.get(#prefixId, or: $value.prefixId),
       content: data.get(#content, or: $value.content));
 
   @override
@@ -678,15 +707,15 @@ class ModuleItemMapper extends ClassMapperBase<ModuleItem> {
 
   static String _$id(ModuleItem v) => v.id;
   static const Field<ModuleItem, String> _f$id = Field('id', _$id, opt: true);
-  static String? _$_name(ModuleItem v) => v._name;
-  static const Field<ModuleItem, String> _f$_name =
-      Field('_name', _$_name, key: r'name', opt: true);
-  static String? _$ownerId(ModuleItem v) => v.ownerId;
-  static const Field<ModuleItem, String> _f$ownerId =
-      Field('ownerId', _$ownerId, opt: true);
-  static bool _$isPrefixSlot(ModuleItem v) => v.isPrefixSlot;
-  static const Field<ModuleItem, bool> _f$isPrefixSlot =
-      Field('isPrefixSlot', _$isPrefixSlot, opt: true, def: false);
+  static String? _$name(ModuleItem v) => v.name;
+  static const Field<ModuleItem, String> _f$name =
+      Field('name', _$name, opt: true);
+  static List<String> _$childrenIds(ModuleItem v) => v.childrenIds;
+  static const Field<ModuleItem, List<String>> _f$childrenIds =
+      Field('childrenIds', _$childrenIds, opt: true, def: const []);
+  static String? _$prefixId(ModuleItem v) => v.prefixId;
+  static const Field<ModuleItem, String> _f$prefixId =
+      Field('prefixId', _$prefixId, opt: true);
   static String _$content(ModuleItem v) => v.content;
   static const Field<ModuleItem, String> _f$content =
       Field('content', _$content, opt: true, def: '');
@@ -694,9 +723,9 @@ class ModuleItemMapper extends ClassMapperBase<ModuleItem> {
   @override
   final MappableFields<ModuleItem> fields = const {
     #id: _f$id,
-    #_name: _f$_name,
-    #ownerId: _f$ownerId,
-    #isPrefixSlot: _f$isPrefixSlot,
+    #name: _f$name,
+    #childrenIds: _f$childrenIds,
+    #prefixId: _f$prefixId,
     #content: _f$content,
   };
 
@@ -725,11 +754,13 @@ mixin ModuleItemMappable {
 abstract class ModuleItemCopyWith<$R, $In extends ModuleItem, $Out>
     implements DataItemBaseCopyWith<$R, $In, $Out> {
   @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>?> get childrenIds;
+  @override
   $R call(
       {String? id,
       String? name,
-      String? ownerId,
-      bool? isPrefixSlot,
+      List<String>? childrenIds,
+      String? prefixId,
       String? content});
   ModuleItemCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -751,15 +782,15 @@ class AssignmentMapper extends ClassMapperBase<Assignment> {
 
   static String _$id(Assignment v) => v.id;
   static const Field<Assignment, String> _f$id = Field('id', _$id, opt: true);
-  static String? _$_name(Assignment v) => v._name;
-  static const Field<Assignment, String> _f$_name =
-      Field('_name', _$_name, key: r'name', opt: true);
-  static String? _$ownerId(Assignment v) => v.ownerId;
-  static const Field<Assignment, String> _f$ownerId =
-      Field('ownerId', _$ownerId, opt: true);
-  static bool _$isPrefixSlot(Assignment v) => v.isPrefixSlot;
-  static const Field<Assignment, bool> _f$isPrefixSlot =
-      Field('isPrefixSlot', _$isPrefixSlot, opt: true, def: false);
+  static String? _$name(Assignment v) => v.name;
+  static const Field<Assignment, String> _f$name =
+      Field('name', _$name, opt: true);
+  static List<String> _$childrenIds(Assignment v) => v.childrenIds;
+  static const Field<Assignment, List<String>> _f$childrenIds =
+      Field('childrenIds', _$childrenIds, opt: true, def: const []);
+  static String? _$prefixId(Assignment v) => v.prefixId;
+  static const Field<Assignment, String> _f$prefixId =
+      Field('prefixId', _$prefixId, opt: true);
   static String _$content(Assignment v) => v.content;
   static const Field<Assignment, String> _f$content =
       Field('content', _$content, opt: true, def: '');
@@ -767,18 +798,18 @@ class AssignmentMapper extends ClassMapperBase<Assignment> {
   @override
   final MappableFields<Assignment> fields = const {
     #id: _f$id,
-    #_name: _f$_name,
-    #ownerId: _f$ownerId,
-    #isPrefixSlot: _f$isPrefixSlot,
+    #name: _f$name,
+    #childrenIds: _f$childrenIds,
+    #prefixId: _f$prefixId,
     #content: _f$content,
   };
 
   static Assignment _instantiate(DecodingData data) {
     return Assignment(
         id: data.dec(_f$id),
-        name: data.dec(_f$_name),
-        ownerId: data.dec(_f$ownerId),
-        isPrefixSlot: data.dec(_f$isPrefixSlot),
+        name: data.dec(_f$name),
+        childrenIds: data.dec(_f$childrenIds),
+        prefixId: data.dec(_f$prefixId),
         content: data.dec(_f$content));
   }
 
@@ -835,11 +866,13 @@ extension AssignmentValueCopy<$R, $Out>
 abstract class AssignmentCopyWith<$R, $In extends Assignment, $Out>
     implements ModuleItemCopyWith<$R, $In, $Out> {
   @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get childrenIds;
+  @override
   $R call(
       {String? id,
       String? name,
-      String? ownerId,
-      bool? isPrefixSlot,
+      List<String>? childrenIds,
+      String? prefixId,
       String? content});
   AssignmentCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -853,25 +886,31 @@ class _AssignmentCopyWithImpl<$R, $Out>
   late final ClassMapperBase<Assignment> $mapper =
       AssignmentMapper.ensureInitialized();
   @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>
+      get childrenIds => ListCopyWith(
+          $value.childrenIds,
+          (v, t) => ObjectCopyWith(v, $identity, t),
+          (v) => call(childrenIds: v));
+  @override
   $R call(
           {Object? id = $none,
           Object? name = $none,
-          Object? ownerId = $none,
-          bool? isPrefixSlot,
+          List<String>? childrenIds,
+          Object? prefixId = $none,
           String? content}) =>
       $apply(FieldCopyWithData({
         if (id != $none) #id: id,
         if (name != $none) #name: name,
-        if (ownerId != $none) #ownerId: ownerId,
-        if (isPrefixSlot != null) #isPrefixSlot: isPrefixSlot,
+        if (childrenIds != null) #childrenIds: childrenIds,
+        if (prefixId != $none) #prefixId: prefixId,
         if (content != null) #content: content
       }));
   @override
   Assignment $make(CopyWithData data) => Assignment(
       id: data.get(#id, or: $value.id),
-      name: data.get(#name, or: $value._name),
-      ownerId: data.get(#ownerId, or: $value.ownerId),
-      isPrefixSlot: data.get(#isPrefixSlot, or: $value.isPrefixSlot),
+      name: data.get(#name, or: $value.name),
+      childrenIds: data.get(#childrenIds, or: $value.childrenIds),
+      prefixId: data.get(#prefixId, or: $value.prefixId),
       content: data.get(#content, or: $value.content));
 
   @override
@@ -897,15 +936,15 @@ class TimestampMapper extends ClassMapperBase<Timestamp> {
 
   static String _$id(Timestamp v) => v.id;
   static const Field<Timestamp, String> _f$id = Field('id', _$id, opt: true);
-  static String? _$_name(Timestamp v) => v._name;
-  static const Field<Timestamp, String> _f$_name =
-      Field('_name', _$_name, key: r'name', opt: true);
-  static String? _$ownerId(Timestamp v) => v.ownerId;
-  static const Field<Timestamp, String> _f$ownerId =
-      Field('ownerId', _$ownerId, opt: true);
-  static bool _$isPrefixSlot(Timestamp v) => v.isPrefixSlot;
-  static const Field<Timestamp, bool> _f$isPrefixSlot =
-      Field('isPrefixSlot', _$isPrefixSlot, opt: true, def: false);
+  static String? _$name(Timestamp v) => v.name;
+  static const Field<Timestamp, String> _f$name =
+      Field('name', _$name, opt: true);
+  static List<String> _$childrenIds(Timestamp v) => v.childrenIds;
+  static const Field<Timestamp, List<String>> _f$childrenIds =
+      Field('childrenIds', _$childrenIds, opt: true, def: const []);
+  static String? _$prefixId(Timestamp v) => v.prefixId;
+  static const Field<Timestamp, String> _f$prefixId =
+      Field('prefixId', _$prefixId, opt: true);
   static int _$value(Timestamp v) => v.value;
   static const Field<Timestamp, int> _f$value =
       Field('value', _$value, opt: true);
@@ -913,18 +952,18 @@ class TimestampMapper extends ClassMapperBase<Timestamp> {
   @override
   final MappableFields<Timestamp> fields = const {
     #id: _f$id,
-    #_name: _f$_name,
-    #ownerId: _f$ownerId,
-    #isPrefixSlot: _f$isPrefixSlot,
+    #name: _f$name,
+    #childrenIds: _f$childrenIds,
+    #prefixId: _f$prefixId,
     #value: _f$value,
   };
 
   static Timestamp _instantiate(DecodingData data) {
     return Timestamp(
         id: data.dec(_f$id),
-        name: data.dec(_f$_name),
-        ownerId: data.dec(_f$ownerId),
-        isPrefixSlot: data.dec(_f$isPrefixSlot),
+        name: data.dec(_f$name),
+        childrenIds: data.dec(_f$childrenIds),
+        prefixId: data.dec(_f$prefixId),
         value: data.dec(_f$value));
   }
 
@@ -980,11 +1019,13 @@ extension TimestampValueCopy<$R, $Out> on ObjectCopyWith<$R, Timestamp, $Out> {
 abstract class TimestampCopyWith<$R, $In extends Timestamp, $Out>
     implements DataItemBaseCopyWith<$R, $In, $Out> {
   @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get childrenIds;
+  @override
   $R call(
       {String? id,
       String? name,
-      String? ownerId,
-      bool? isPrefixSlot,
+      List<String>? childrenIds,
+      String? prefixId,
       int? value});
   TimestampCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -998,29 +1039,157 @@ class _TimestampCopyWithImpl<$R, $Out>
   late final ClassMapperBase<Timestamp> $mapper =
       TimestampMapper.ensureInitialized();
   @override
+  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>
+      get childrenIds => ListCopyWith(
+          $value.childrenIds,
+          (v, t) => ObjectCopyWith(v, $identity, t),
+          (v) => call(childrenIds: v));
+  @override
   $R call(
           {Object? id = $none,
           Object? name = $none,
-          Object? ownerId = $none,
-          bool? isPrefixSlot,
+          List<String>? childrenIds,
+          Object? prefixId = $none,
           Object? value = $none}) =>
       $apply(FieldCopyWithData({
         if (id != $none) #id: id,
         if (name != $none) #name: name,
-        if (ownerId != $none) #ownerId: ownerId,
-        if (isPrefixSlot != null) #isPrefixSlot: isPrefixSlot,
+        if (childrenIds != null) #childrenIds: childrenIds,
+        if (prefixId != $none) #prefixId: prefixId,
         if (value != $none) #value: value
       }));
   @override
   Timestamp $make(CopyWithData data) => Timestamp(
       id: data.get(#id, or: $value.id),
-      name: data.get(#name, or: $value._name),
-      ownerId: data.get(#ownerId, or: $value.ownerId),
-      isPrefixSlot: data.get(#isPrefixSlot, or: $value.isPrefixSlot),
+      name: data.get(#name, or: $value.name),
+      childrenIds: data.get(#childrenIds, or: $value.childrenIds),
+      prefixId: data.get(#prefixId, or: $value.prefixId),
       value: data.get(#value, or: $value.value));
 
   @override
   TimestampCopyWith<$R2, Timestamp, $Out2> $chain<$R2, $Out2>(
           Then<$Out2, $R2> t) =>
       _TimestampCopyWithImpl<$R2, $Out2>($value, $cast, t);
+}
+
+class ProjectModelMapper extends ClassMapperBase<ProjectModel> {
+  ProjectModelMapper._();
+
+  static ProjectModelMapper? _instance;
+  static ProjectModelMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = ProjectModelMapper._());
+      DataItemBaseMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'ProjectModel';
+
+  static String _$name(ProjectModel v) => v.name;
+  static const Field<ProjectModel, String> _f$name =
+      Field('name', _$name, opt: true, def: 'Unnamed project');
+  static List<DataItemBase> _$dataItems(ProjectModel v) => v.dataItems;
+  static const Field<ProjectModel, List<DataItemBase>> _f$dataItems =
+      Field('dataItems', _$dataItems, opt: true, def: const []);
+
+  @override
+  final MappableFields<ProjectModel> fields = const {
+    #name: _f$name,
+    #dataItems: _f$dataItems,
+  };
+
+  static ProjectModel _instantiate(DecodingData data) {
+    return ProjectModel(
+        name: data.dec(_f$name), dataItems: data.dec(_f$dataItems));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static ProjectModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<ProjectModel>(map);
+  }
+
+  static ProjectModel fromJson(String json) {
+    return ensureInitialized().decodeJson<ProjectModel>(json);
+  }
+}
+
+mixin ProjectModelMappable {
+  String toJson() {
+    return ProjectModelMapper.ensureInitialized()
+        .encodeJson<ProjectModel>(this as ProjectModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return ProjectModelMapper.ensureInitialized()
+        .encodeMap<ProjectModel>(this as ProjectModel);
+  }
+
+  ProjectModelCopyWith<ProjectModel, ProjectModel, ProjectModel> get copyWith =>
+      _ProjectModelCopyWithImpl<ProjectModel, ProjectModel>(
+          this as ProjectModel, $identity, $identity);
+  @override
+  String toString() {
+    return ProjectModelMapper.ensureInitialized()
+        .stringifyValue(this as ProjectModel);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return ProjectModelMapper.ensureInitialized()
+        .equalsValue(this as ProjectModel, other);
+  }
+
+  @override
+  int get hashCode {
+    return ProjectModelMapper.ensureInitialized()
+        .hashValue(this as ProjectModel);
+  }
+}
+
+extension ProjectModelValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, ProjectModel, $Out> {
+  ProjectModelCopyWith<$R, ProjectModel, $Out> get $asProjectModel =>
+      $base.as((v, t, t2) => _ProjectModelCopyWithImpl<$R, $Out>(v, t, t2));
+}
+
+abstract class ProjectModelCopyWith<$R, $In extends ProjectModel, $Out>
+    implements ClassCopyWith<$R, $In, $Out> {
+  ListCopyWith<$R, DataItemBase,
+      DataItemBaseCopyWith<$R, DataItemBase, DataItemBase>> get dataItems;
+  $R call({String? name, List<DataItemBase>? dataItems});
+  ProjectModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+}
+
+class _ProjectModelCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, ProjectModel, $Out>
+    implements ProjectModelCopyWith<$R, ProjectModel, $Out> {
+  _ProjectModelCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<ProjectModel> $mapper =
+      ProjectModelMapper.ensureInitialized();
+  @override
+  ListCopyWith<$R, DataItemBase,
+          DataItemBaseCopyWith<$R, DataItemBase, DataItemBase>>
+      get dataItems => ListCopyWith($value.dataItems,
+          (v, t) => v.copyWith.$chain(t), (v) => call(dataItems: v));
+  @override
+  $R call({String? name, List<DataItemBase>? dataItems}) =>
+      $apply(FieldCopyWithData({
+        if (name != null) #name: name,
+        if (dataItems != null) #dataItems: dataItems
+      }));
+  @override
+  ProjectModel $make(CopyWithData data) => ProjectModel(
+      name: data.get(#name, or: $value.name),
+      dataItems: data.get(#dataItems, or: $value.dataItems));
+
+  @override
+  ProjectModelCopyWith<$R2, ProjectModel, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _ProjectModelCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
